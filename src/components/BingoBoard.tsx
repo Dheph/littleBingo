@@ -48,16 +48,26 @@ export default function BingoBoard() {
       <Box
         bg={theme.headerColor}
         px={6}
-        py={3}
+        py={4}
         display="flex"
         alignItems="center"
-        justifyContent="space-between"
-        borderBottom="1px solid whiteAlpha.100"
+        justifyContent="center"
+        position="relative"
+        borderBottom="2px solid whiteAlpha.200"
+        boxShadow={`0 4px 20px ${theme.primaryColor}20`}
       >
-        <Text fontSize="xl" fontWeight="bold" color={theme.textColor}>
+        <Text
+          fontSize={{ base: '2xl', md: '3xl', lg: '4xl' }}
+          fontWeight="900"
+          color={theme.textColor}
+          textTransform="uppercase"
+          letterSpacing="0.05em"
+          textAlign="center"
+          style={{ textShadow: `0 0 20px ${theme.primaryColor}40` }}
+        >
           {title}
         </Text>
-        <Box display="flex" gap={2}>
+        <Box display="flex" gap={2} position="absolute" right={6}>
           <Button
             size="sm"
             variant="ghost"

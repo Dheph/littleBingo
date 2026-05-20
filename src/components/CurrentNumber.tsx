@@ -12,29 +12,27 @@ export default function CurrentNumber() {
 
   return (
     <Box textAlign="center">
-      <Text fontSize="lg" opacity={0.5} mb={4}>
-        Número Atual
-      </Text>
-      <Box minH="200px" display="flex" alignItems="center" justifyContent="center">
+      <Box minH="250px" display="flex" alignItems="center" justifyContent="center">
         <AnimatePresence mode="wait">
           {currentNumber !== null ? (
             <MotionText
               key={currentNumber}
-              fontSize="9xl"
-              fontWeight="bold"
+              fontSize={{ base: '8rem', md: '12rem', lg: '16rem' }}
+              fontWeight="900"
               color={theme.textColor}
               initial={{ scale: 0.3, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.5, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
               lineHeight={1}
+              style={{ textShadow: `0 0 60px ${theme.primaryColor}40` }}
             >
               {currentNumber}
             </MotionText>
           ) : (
             <MotionText
               key="empty"
-              fontSize="5xl"
+              fontSize={{ base: '3rem', md: '4rem' }}
               opacity={0.3}
               color={theme.textColor}
               initial={{ opacity: 0 }}
