@@ -1,5 +1,6 @@
 import { Button } from '@chakra-ui/react'
 import { useBingoStore } from '../store/bingoStore'
+import { playPop } from '../utils/sounds'
 
 export default function DrawButton() {
   const draw = useBingoStore((s) => s.draw)
@@ -7,6 +8,11 @@ export default function DrawButton() {
   const totalNumbers = useBingoStore((s) => s.totalNumbers)
   const drawnNumbers = useBingoStore((s) => s.drawnNumbers)
   const isComplete = drawnNumbers.length >= totalNumbers
+
+  function handleDraw() {
+    playPop()
+    draw()
+  }
 
   return (
     <Button
@@ -19,7 +25,7 @@ export default function DrawButton() {
       py={8}
       _hover={{ opacity: 0.9 }}
       _disabled={{ opacity: 0.4, cursor: 'not-allowed' }}
-      onClick={draw}
+      onClick={handleDraw}
       disabled={isComplete}
     >
       {isComplete ? 'Todos os números foram sorteados.' : 'SORTEAR'}

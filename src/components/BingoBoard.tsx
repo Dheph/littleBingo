@@ -3,6 +3,7 @@ import { Box, Flex, Text, Button, Drawer } from '@chakra-ui/react'
 import { useBingoStore } from '../store/bingoStore'
 import { useNavigate } from 'react-router-dom'
 import { clearState } from '../utils/storage'
+import { playBingo } from '../utils/sounds'
 import CurrentNumber from './CurrentNumber'
 import DrawButton from './DrawButton'
 import HistoryGrid from './HistoryGrid'
@@ -23,6 +24,7 @@ export default function BingoBoard() {
   function handleBingo() {
     bingo()
     setShowBingo(true)
+    playBingo()
     confetti({
       particleCount: 150,
       spread: 70,
