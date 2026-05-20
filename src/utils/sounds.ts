@@ -1,7 +1,10 @@
-const audioCtx = typeof window !== 'undefined' ? new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)() : null
+let audioCtx: AudioContext | null = null
 
-function getCtx() {
-  if (!audioCtx) return null
+function getCtx(): AudioContext | null {
+  if (typeof window === 'undefined') return null
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
+  }
   if (audioCtx.state === 'suspended') audioCtx.resume()
   return audioCtx
 }
@@ -12,7 +15,6 @@ export function playPop() {
 
   const now = ctx.currentTime
 
-  // Main pop tone
   const osc1 = ctx.createOscillator()
   const gain1 = ctx.createGain()
   osc1.type = 'sine'
@@ -24,7 +26,6 @@ export function playPop() {
   osc1.start(now)
   osc1.stop(now + 0.12)
 
-  // Layered click
   const osc2 = ctx.createOscillator()
   const gain2 = ctx.createGain()
   osc2.type = 'triangle'
@@ -42,13 +43,12 @@ export function playBingo() {
   if (!ctx) return
 
   const now = ctx.currentTime
-  const notes = [523.25, 659.25, 783.99, 1046.5, 1318.5] // C5, E5, G5, C6, E6
+  const notes = [523.25, 659.25, 783.99, 1046.5, 1318.5]
   const noteDuration = 0.18
 
   notes.forEach((freq, i) => {
     const t = now + i * noteDuration * 0.7
 
-    // Main tone
     const osc = ctx.createOscillator()
     const gain = ctx.createGain()
     osc.type = 'sine'
@@ -60,7 +60,6 @@ export function playBingo() {
     osc.start(t)
     osc.stop(t + 0.35)
 
-    // Harmonic shimmer
     const osc2 = ctx.createOscillator()
     const gain2 = ctx.createGain()
     osc2.type = 'sine'
@@ -73,8 +72,7 @@ export function playBingo() {
     osc2.stop(t + 0.2)
   })
 
-  // Final sparkle chord
-  const chordFreqs = [1046.5, 1318.5, 1567.98] // C6, E6, G6
+  const chordFreqs = [1046.5, 1318.5, 1567.98]
   const chordT = now + notes.length * noteDuration * 0.7
   chordFreqs.forEach((freq) => {
     const osc = ctx.createOscillator()
