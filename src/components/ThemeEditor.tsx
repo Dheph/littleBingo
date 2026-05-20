@@ -1,5 +1,6 @@
+import { useState, useEffect } from 'react'
 import { VStack, HStack, Text, Box } from '@chakra-ui/react'
-import { useBingoStore } from '../store/bingoStore'
+import type { BingoTheme } from '../types'
 
 const colorFields = [
   { key: 'headerColor', label: 'Cor do Header' },
@@ -10,22 +11,51 @@ const colorFields = [
   { key: 'textColor', label: 'Cor do Texto' },
 ]
 
-export default function ThemeEditor() {
-  const theme = useBingoStore((s) => s.theme)
-  const updateTheme = useBingoStore((s) => s.updateTheme)
+interface ThemeEditorProps {
+  theme: BingoTheme
+  imageFile?: File | null
+  onChange: (theme: BingoTheme) => void
+  onImageSelect?: (file: File) => void
+  onImageRemove?: () => void
+}
+
+export default function ThemeEditor({ theme, imageFile, onChange, onImageSelect, onImageRemove }: ThemeEditorProps) {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (imageFile) {
+      const url = URL.createObjectURL(imageFile)
+      setPreviewUrl(url)
+      return () => URL.revokeObjectURL(url)
+    } else if (theme.backgroundImage) {
+      setPreviewUrl(theme.backgroundImage)
+    } else {
+      setPreviewUrl(null)
+    }
+  }, [imageFile, theme.backgroundImage])
 
   function handleColorChange(key: string, value: string) {
-    updateTheme({ [key]: value })
+    onChange({ ...theme, [key]: value })
   }
 
-  function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleImageSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => {
-      updateTheme({ backgroundImage: reader.result as string })
+    if (onImageSelect) {
+      onImageSelect(file)
+    } else {
+      compressImage(file).then((base64) => {
+        onChange({ ...theme, backgroundImage: base64 })
+      })
     }
-    reader.readAsDataURL(file)
+  }
+
+  function handleRemoveImage() {
+    if (onImageRemove) {
+      onImageRemove()
+    } else {
+      onChange({ ...theme, backgroundImage: null })
+    }
   }
 
   return (
@@ -37,7 +67,7 @@ export default function ThemeEditor() {
         border="1px solid"
         borderColor="whiteAlpha.300"
         bg={theme.leftPanelColor}
-        bgImage={theme.backgroundImage ? `url(${theme.backgroundImage})` : 'none'}
+        bgImage={previewUrl ? `url(${previewUrl})` : 'none'}
         bgSize="cover"
         backgroundPosition="center"
         position="relative"
@@ -91,7 +121,7 @@ export default function ThemeEditor() {
           <HStack gap={2}>
             <input
               type="color"
-              value={(theme as unknown as Record<string, string>)[key]}
+              value={theme[key as keyof BingoTheme] as string}
               onChange={(e) => handleColorChange(key, e.target.value)}
               style={{
                 width: '50px',
@@ -104,7 +134,7 @@ export default function ThemeEditor() {
               }}
             />
             <Text fontSize="xs" fontFamily="mono" opacity={0.6}>
-              {(theme as unknown as Record<string, string>)[key]}
+              {theme[key as keyof BingoTheme] as string}
             </Text>
           </HStack>
         </HStack>
@@ -117,7 +147,7 @@ export default function ThemeEditor() {
         <input
           type="file"
           accept="image/*"
-          onChange={handleImageUpload}
+          onChange={handleImageSelect}
           style={{
             width: '100%',
             padding: '8px',
@@ -129,12 +159,12 @@ export default function ThemeEditor() {
             cursor: 'pointer',
           }}
         />
-        {theme.backgroundImage && (
+        {previewUrl && (
           <Text
             fontSize="xs"
             opacity={0.6}
             cursor="pointer"
-            onClick={() => updateTheme({ backgroundImage: null })}
+            onClick={handleRemoveImage}
             _hover={{ opacity: 1 }}
           >
             Remover imagem
@@ -143,4 +173,35 @@ export default function ThemeEditor() {
       </VStack>
     </VStack>
   )
+}
+
+function compressImage(file: File): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new Image()
+    const reader = new FileReader()
+    reader.onload = () => {
+      img.src = reader.result as string
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        const maxDim = 800
+        let w = img.width
+        let h = img.height
+        if (w > maxDim || h > maxDim) {
+          if (w > h) {
+            h = (h / w) * maxDim
+            w = maxDim
+          } else {
+            w = (w / h) * maxDim
+            h = maxDim
+          }
+        }
+        canvas.width = w
+        canvas.height = h
+        const ctx = canvas.getContext('2d')!
+        ctx.drawImage(img, 0, 0, w, h)
+        resolve(canvas.toDataURL('image/jpeg', 0.7))
+      }
+    }
+    reader.readAsDataURL(file)
+  })
 }

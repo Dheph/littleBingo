@@ -13,6 +13,7 @@ export default function EditPanel() {
   const removeNumber = useBingoStore((s) => s.removeNumber)
   const drawnNumbers = useBingoStore((s) => s.drawnNumbers)
   const theme = useBingoStore((s) => s.theme)
+  const updateTheme = useBingoStore((s) => s.updateTheme)
 
   const [manualNum, setManualNum] = useState('')
 
@@ -115,7 +116,7 @@ export default function EditPanel() {
         <Text fontSize="sm" fontWeight="semibold" mb={4} opacity={0.8}>
           Tema
         </Text>
-        <ThemeEditor />
+        <ThemeEditor theme={theme} onChange={updateTheme} />
       </Box>
     </VStack>
   )

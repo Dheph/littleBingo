@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Box, Flex, Text, Button, Drawer } from '@chakra-ui/react'
 import { useBingoStore } from '../store/bingoStore'
+import { useNavigate } from 'react-router-dom'
 import { clearState } from '../utils/storage'
 import CurrentNumber from './CurrentNumber'
 import DrawButton from './DrawButton'
@@ -15,6 +16,7 @@ export default function BingoBoard() {
   const drawnNumbers = useBingoStore((s) => s.drawnNumbers)
   const bingo = useBingoStore((s) => s.bingo)
   const reset = useBingoStore((s) => s.reset)
+  const navigate = useNavigate()
   const [showBingo, setShowBingo] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
 
@@ -38,7 +40,7 @@ export default function BingoBoard() {
   function handleNewBingo() {
     if (window.confirm('Criar um novo bingo? O atual será apagado.')) {
       clearState()
-      window.location.reload()
+      navigate('/')
     }
   }
 

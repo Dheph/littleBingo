@@ -4,8 +4,19 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useBingoStore } from '../store/bingoStore'
 import { useNavigate } from 'react-router-dom'
 import ThemeEditor from './ThemeEditor'
+import type { BingoTheme } from '../types'
 
 const MotionBox = motion(Box)
+
+const defaultWizardTheme: BingoTheme = {
+  primaryColor: '#6366f1',
+  headerColor: '#1e1b4b',
+  leftPanelColor: '#0f172a',
+  rightPanelColor: '#1e293b',
+  textColor: '#f8fafc',
+  buttonColor: '#818cf8',
+  backgroundImage: null,
+}
 
 const steps = [
   { question: 'Quantos números terão no bingo?', placeholder: '75', type: 'number' as const },
@@ -14,21 +25,57 @@ const steps = [
   { question: 'Tudo pronto!', placeholder: '', type: 'start' as const },
 ]
 
+function compressImage(file: File): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new Image()
+    const reader = new FileReader()
+    reader.onload = () => {
+      img.src = reader.result as string
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        const maxDim = 800
+        let w = img.width
+        let h = img.height
+        if (w > maxDim || h > maxDim) {
+          if (w > h) {
+            h = (h / w) * maxDim
+            w = maxDim
+          } else {
+            w = (w / h) * maxDim
+            h = maxDim
+          }
+        }
+        canvas.width = w
+        canvas.height = h
+        const ctx = canvas.getContext('2d')!
+        ctx.drawImage(img, 0, 0, w, h)
+        resolve(canvas.toDataURL('image/jpeg', 0.7))
+      }
+    }
+    reader.readAsDataURL(file)
+  })
+}
+
 export default function WizardSetup() {
   const [currentStep, setCurrentStep] = useState(0)
   const [totalNumbers, setTotalNumbers] = useState(75)
   const [title, setTitle] = useState('')
+  const [wizardTheme, setWizardTheme] = useState<BingoTheme>(defaultWizardTheme)
+  const [imageFile, setImageFile] = useState<File | null>(null)
   const navigate = useNavigate()
   const setup = useBingoStore((s) => s.setup)
-  const theme = useBingoStore((s) => s.theme)
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep === 0 && totalNumbers < 1) return
     if (currentStep === 1 && !title.trim()) return
     if (currentStep < steps.length - 1) {
       setCurrentStep((s) => s + 1)
     } else {
-      setup(title.trim(), totalNumbers, theme)
+      let finalTheme = { ...wizardTheme }
+      if (imageFile) {
+        finalTheme.backgroundImage = await compressImage(imageFile)
+      }
+      setup(title.trim(), totalNumbers, finalTheme)
       navigate('/bingo')
     }
   }
@@ -43,8 +90,8 @@ export default function WizardSetup() {
       align="center"
       justify="center"
       minH="100vh"
-      bg={theme.leftPanelColor}
-      color={theme.textColor}
+      bg={wizardTheme.leftPanelColor}
+      color={wizardTheme.textColor}
       p={8}
     >
       <AnimatePresence mode="wait">
@@ -81,7 +128,7 @@ export default function WizardSetup() {
                 maxW="200px"
                 bg="whiteAlpha.200"
                 borderColor="whiteAlpha.300"
-                _focus={{ borderColor: theme.buttonColor }}
+                _focus={{ borderColor: wizardTheme.buttonColor }}
               />
             )}
 
@@ -96,12 +143,20 @@ export default function WizardSetup() {
                 fontSize="2xl"
                 bg="whiteAlpha.200"
                 borderColor="whiteAlpha.300"
-                _focus={{ borderColor: theme.buttonColor }}
+                _focus={{ borderColor: wizardTheme.buttonColor }}
                 onKeyDown={(e) => e.key === 'Enter' && handleNext()}
               />
             )}
 
-            {currentStep === 2 && <ThemeEditor />}
+            {currentStep === 2 && (
+              <ThemeEditor
+                theme={wizardTheme}
+                imageFile={imageFile}
+                onChange={setWizardTheme}
+                onImageSelect={setImageFile}
+                onImageRemove={() => setImageFile(null)}
+              />
+            )}
 
             {currentStep === 3 && (
               <VStack gap={4}>
@@ -118,7 +173,7 @@ export default function WizardSetup() {
                   variant="outline"
                   size="lg"
                   borderColor="whiteAlpha.300"
-                  color={theme.textColor}
+                  color={wizardTheme.textColor}
                   _hover={{ bg: 'whiteAlpha.100' }}
                 >
                   Voltar
@@ -127,7 +182,7 @@ export default function WizardSetup() {
               <Button
                 onClick={handleNext}
                 size="lg"
-                bg={theme.buttonColor}
+                bg={wizardTheme.buttonColor}
                 color="white"
                 _hover={{ opacity: 0.9 }}
                 disabled={

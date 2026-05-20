@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Box } from '@chakra-ui/react'
 import { useBingoStore } from './store/bingoStore'
+import LandingPage from './components/LandingPage'
 import WizardSetup from './components/WizardSetup'
 import BingoBoard from './components/BingoBoard'
 
@@ -10,7 +11,8 @@ function App() {
   return (
     <Box minH="100vh" w="100vw" overflow="hidden">
       <Routes>
-        <Route path="/" element={isSetup ? <Navigate to="/bingo" replace /> : <WizardSetup />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/setup" element={isSetup ? <Navigate to="/bingo" replace /> : <WizardSetup />} />
         <Route path="/bingo" element={isSetup ? <BingoBoard /> : <Navigate to="/" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
