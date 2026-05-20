@@ -11,6 +11,10 @@ const defaultTheme: BingoTheme = {
   textColor: '#f8fafc',
   buttonColor: '#818cf8',
   backgroundImage: null,
+  backgroundGradient: null,
+  gradientFrom: '#0f172a',
+  gradientTo: '#1e1b4b',
+  gradientDirection: 'to bottom',
 }
 
 const defaultState: BingoState = {

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useBingoStore } from '../store/bingoStore'
 import { useNavigate } from 'react-router-dom'
 import ThemeEditor from './ThemeEditor'
+import { compressImage } from '../utils/compress'
 import type { BingoTheme } from '../types'
 
 const MotionBox = motion(Box)
@@ -16,6 +17,10 @@ const defaultWizardTheme: BingoTheme = {
   textColor: '#f8fafc',
   buttonColor: '#818cf8',
   backgroundImage: null,
+  backgroundGradient: null,
+  gradientFrom: '#0f172a',
+  gradientTo: '#1e1b4b',
+  gradientDirection: 'to bottom',
 }
 
 const steps = [
@@ -24,37 +29,6 @@ const steps = [
   { question: 'Personalize o visual', placeholder: '', type: 'theme' as const },
   { question: 'Tudo pronto!', placeholder: '', type: 'start' as const },
 ]
-
-function compressImage(file: File): Promise<string> {
-  return new Promise((resolve) => {
-    const img = new Image()
-    const reader = new FileReader()
-    reader.onload = () => {
-      img.src = reader.result as string
-      img.onload = () => {
-        const canvas = document.createElement('canvas')
-        const maxDim = 800
-        let w = img.width
-        let h = img.height
-        if (w > maxDim || h > maxDim) {
-          if (w > h) {
-            h = (h / w) * maxDim
-            w = maxDim
-          } else {
-            w = (w / h) * maxDim
-            h = maxDim
-          }
-        }
-        canvas.width = w
-        canvas.height = h
-        const ctx = canvas.getContext('2d')!
-        ctx.drawImage(img, 0, 0, w, h)
-        resolve(canvas.toDataURL('image/jpeg', 0.7))
-      }
-    }
-    reader.readAsDataURL(file)
-  })
-}
 
 export default function WizardSetup() {
   const [currentStep, setCurrentStep] = useState(0)

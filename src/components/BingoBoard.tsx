@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Box, Flex, Text, Button, Drawer } from '@chakra-ui/react'
+import { useState, useEffect, useCallback } from 'react'
+import { Box, Flex, Text, Button, Drawer, IconButton } from '@chakra-ui/react'
 import { useBingoStore } from '../store/bingoStore'
 import { useNavigate } from 'react-router-dom'
 import { clearState } from '../utils/storage'
@@ -11,6 +11,22 @@ import BingoOverlay from './BingoOverlay'
 import EditPanel from './EditPanel'
 import confetti from 'canvas-confetti'
 
+function FullscreenIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+    </svg>
+  )
+}
+
+function MinimizeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
+    </svg>
+  )
+}
+
 export default function BingoBoard() {
   const theme = useBingoStore((s) => s.theme)
   const title = useBingoStore((s) => s.title)
@@ -20,6 +36,23 @@ export default function BingoBoard() {
   const navigate = useNavigate()
   const [showBingo, setShowBingo] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+
+  useEffect(() => {
+    function onChange() {
+      setIsFullscreen(!!document.fullscreenElement)
+    }
+    document.addEventListener('fullscreenchange', onChange)
+    return () => document.removeEventListener('fullscreenchange', onChange)
+  }, [])
+
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen()
+    } else {
+      document.exitFullscreen()
+    }
+  }, [])
 
   function handleBingo() {
     bingo()
@@ -44,6 +77,23 @@ export default function BingoBoard() {
       clearState()
       navigate('/')
     }
+  }
+
+  const hasGradient = !!theme.backgroundGradient
+  const hasImage = !!theme.backgroundImage
+
+  function getLeftPanelStyle(): React.CSSProperties {
+    if (hasImage) {
+      return {
+        background: `url(${theme.backgroundImage}) center / cover no-repeat`,
+      }
+    }
+    if (hasGradient) {
+      return {
+        background: theme.backgroundGradient!,
+      }
+    }
+    return {}
   }
 
   return (
@@ -72,6 +122,16 @@ export default function BingoBoard() {
           {title}
         </Text>
         <Box display="flex" gap={2} position="absolute" right={6}>
+          <IconButton
+            size="sm"
+            variant="ghost"
+            color={theme.textColor}
+            onClick={toggleFullscreen}
+            aria-label={isFullscreen ? 'Sair de tela cheia' : 'Tela cheia'}
+            _hover={{ bg: 'whiteAlpha.100' }}
+          >
+            {isFullscreen ? <MinimizeIcon /> : <FullscreenIcon />}
+          </IconButton>
           <Button
             size="sm"
             variant="ghost"
@@ -98,10 +158,7 @@ export default function BingoBoard() {
         {/* Left Panel */}
         <Box
           flex={2}
-          bg={theme.leftPanelColor}
-          bgImage={theme.backgroundImage ? `url(${theme.backgroundImage})` : 'none'}
-          bgSize="cover"
-          backgroundPosition="center"
+          bg={hasImage || hasGradient ? undefined : theme.leftPanelColor}
           display="flex"
           flexDirection="column"
           alignItems="center"
@@ -109,6 +166,8 @@ export default function BingoBoard() {
           gap={8}
           p={8}
           position="relative"
+          overflow="hidden"
+          style={getLeftPanelStyle()}
         >
           <CurrentNumber />
           <DrawButton />

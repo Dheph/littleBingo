@@ -6,6 +6,10 @@ export interface BingoTheme {
   textColor: string
   buttonColor: string
   backgroundImage: string | null
+  backgroundGradient: string | null
+  gradientFrom: string
+  gradientTo: string
+  gradientDirection: string
 }
 
 export interface BingoState {
