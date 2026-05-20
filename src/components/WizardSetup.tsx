@@ -71,7 +71,7 @@ export default function WizardSetup() {
     if (currentStep < steps.length - 1) {
       setCurrentStep((s) => s + 1)
     } else {
-      let finalTheme = { ...wizardTheme }
+      const finalTheme = { ...wizardTheme }
       if (imageFile) {
         finalTheme.backgroundImage = await compressImage(imageFile)
       }

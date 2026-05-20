@@ -4,13 +4,16 @@ import { ChakraProvider, defaultSystem } from '@chakra-ui/react'
 import { ThemeProvider } from 'next-themes'
 import { HashRouter } from 'react-router-dom'
 import App from './App'
+import ErrorBoundary from './components/ErrorBoundary'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ChakraProvider value={defaultSystem}>
       <ThemeProvider attribute="class" disableTransitionOnChange>
         <HashRouter>
-          <App />
+          <ErrorBoundary>
+            <App />
+          </ErrorBoundary>
         </HashRouter>
       </ThemeProvider>
     </ChakraProvider>

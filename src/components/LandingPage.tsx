@@ -53,10 +53,11 @@ export default function LandingPage() {
           fontWeight="900"
           letterSpacing="-0.03em"
           lineHeight={1.15}
-          bgGradient="to-r"
-          gradientFrom="#818cf8"
-          gradientTo="#6366f1"
-          bgClip="text"
+          style={{
+            background: 'linear-gradient(to right, #818cf8, #6366f1)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
           pb={2}
         >
           littleBingo

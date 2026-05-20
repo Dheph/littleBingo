@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { VStack, HStack, Text, Box } from '@chakra-ui/react'
 import type { BingoTheme } from '../types'
 
@@ -20,19 +20,14 @@ interface ThemeEditorProps {
 }
 
 export default function ThemeEditor({ theme, imageFile, onChange, onImageSelect, onImageRemove }: ThemeEditorProps) {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const previewUrl = imageFile ? URL.createObjectURL(imageFile) : (theme.backgroundImage || null)
 
   useEffect(() => {
-    if (imageFile) {
-      const url = URL.createObjectURL(imageFile)
-      setPreviewUrl(url)
-      return () => URL.revokeObjectURL(url)
-    } else if (theme.backgroundImage) {
-      setPreviewUrl(theme.backgroundImage)
-    } else {
-      setPreviewUrl(null)
+    const urlToRevoke = imageFile ? previewUrl : null
+    return () => {
+      if (urlToRevoke) URL.revokeObjectURL(urlToRevoke)
     }
-  }, [imageFile, theme.backgroundImage])
+  }, [imageFile, previewUrl])
 
   function handleColorChange(key: string, value: string) {
     onChange({ ...theme, [key]: value })
