@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Box, Flex, Text, Button, Drawer } from '@chakra-ui/react'
 import { useBingoStore } from '../store/bingoStore'
+import { clearState } from '../utils/storage'
 import CurrentNumber from './CurrentNumber'
 import DrawButton from './DrawButton'
 import HistoryGrid from './HistoryGrid'
@@ -34,6 +35,13 @@ export default function BingoBoard() {
     }
   }
 
+  function handleNewBingo() {
+    if (window.confirm('Criar um novo bingo? O atual será apagado.')) {
+      clearState()
+      window.location.reload()
+    }
+  }
+
   return (
     <Flex direction="column" h="100vh" w="100vw" overflow="hidden">
       {/* Header */}
@@ -49,15 +57,26 @@ export default function BingoBoard() {
         <Text fontSize="xl" fontWeight="bold" color={theme.textColor}>
           {title}
         </Text>
-        <Button
-          size="sm"
-          variant="ghost"
-          color={theme.textColor}
-          onClick={() => setEditOpen(true)}
-          _hover={{ bg: 'whiteAlpha.100' }}
-        >
-          Editar
-        </Button>
+        <Box display="flex" gap={2}>
+          <Button
+            size="sm"
+            variant="ghost"
+            color={theme.textColor}
+            onClick={handleNewBingo}
+            _hover={{ bg: 'whiteAlpha.100' }}
+          >
+            Novo Bingo
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            color={theme.textColor}
+            onClick={() => setEditOpen(true)}
+            _hover={{ bg: 'whiteAlpha.100' }}
+          >
+            Editar
+          </Button>
+        </Box>
       </Box>
 
       {/* Main Content */}

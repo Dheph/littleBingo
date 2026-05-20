@@ -1,4 +1,4 @@
-import { VStack, HStack, Text, Input, Box } from '@chakra-ui/react'
+import { VStack, HStack, Text, Box } from '@chakra-ui/react'
 import { useBingoStore } from '../store/bingoStore'
 
 const colorFields = [
@@ -51,7 +51,7 @@ export default function ThemeEditor() {
           justifyContent="center"
         >
           <Text fontSize="xs" color={theme.textColor}>
-            Preview Header
+            Preview
           </Text>
         </Box>
         <Box display="flex" h="calc(100% - 24px)">
@@ -89,14 +89,19 @@ export default function ThemeEditor() {
             {label}
           </Text>
           <HStack gap={2}>
-            <Input
+            <input
               type="color"
               value={(theme as unknown as Record<string, string>)[key]}
               onChange={(e) => handleColorChange(key, e.target.value)}
-              w="50px"
-              h="36px"
-              p={1}
-              cursor="pointer"
+              style={{
+                width: '50px',
+                height: '36px',
+                padding: '2px',
+                cursor: 'pointer',
+                border: '1px solid rgba(255,255,255,0.2)',
+                borderRadius: '6px',
+                background: 'transparent',
+              }}
             />
             <Text fontSize="xs" fontFamily="mono" opacity={0.6}>
               {(theme as unknown as Record<string, string>)[key]}
@@ -109,14 +114,20 @@ export default function ThemeEditor() {
         <Text fontSize="sm" opacity={0.8}>
           Imagem de Fundo
         </Text>
-        <Input
+        <input
           type="file"
           accept="image/*"
           onChange={handleImageUpload}
-          size="sm"
-          color={theme.textColor}
-          borderColor="whiteAlpha.300"
-          _hover={{ borderColor: 'whiteAlpha.500' }}
+          style={{
+            width: '100%',
+            padding: '8px',
+            fontSize: '14px',
+            color: theme.textColor,
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: '6px',
+            background: 'transparent',
+            cursor: 'pointer',
+          }}
         />
         {theme.backgroundImage && (
           <Text
