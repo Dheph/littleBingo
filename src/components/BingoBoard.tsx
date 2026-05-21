@@ -86,7 +86,7 @@ export default function BingoBoard() {
     if (hasImage) {
       return {
         backgroundImage: `url(${theme.backgroundImage})`,
-        backgroundSize: isFullscreen ? 'contain' : 'cover',
+        backgroundSize: isFullscreen ? 'auto' : 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         backgroundColor: theme.imageBgColor,
