@@ -173,15 +173,15 @@ export default function BingoBoard() {
           <DrawButton />
           <Button
             size="xl"
-            bg="red.500"
+            bg={theme.bingoButtonColor}
             color="white"
             fontSize="xl"
             fontWeight="bold"
             px={12}
-            _hover={{ bg: 'red.600' }}
+            _hover={{ filter: 'brightness(0.85)' }}
             onClick={handleBingo}
           >
-            BINGO!
+            {theme.bingoButtonText}
           </Button>
         </Box>
 

@@ -5,6 +5,8 @@ export interface BingoTheme {
   rightPanelColor: string
   textColor: string
   buttonColor: string
+  bingoButtonColor: string
+  bingoButtonText: string
   backgroundImage: string | null
   backgroundGradient: string | null
   gradientFrom: string

@@ -9,6 +9,7 @@ const colorFields = [
   { key: 'rightPanelColor', label: 'Cor Lateral Direita' },
   { key: 'primaryColor', label: 'Cor Principal' },
   { key: 'buttonColor', label: 'Cor do Botão' },
+  { key: 'bingoButtonColor', label: 'Cor do Botão BINGO' },
   { key: 'textColor', label: 'Cor do Texto' },
 ]
 
@@ -189,6 +190,27 @@ export default function ThemeEditor({ theme, imageFile, onChange, onImageSelect,
           </HStack>
         </HStack>
       ))}
+
+      <HStack w="full" justify="space-between">
+        <Text fontSize="sm" opacity={0.8}>
+          Texto do Botão BINGO
+        </Text>
+        <input
+          type="text"
+          value={theme.bingoButtonText}
+          onChange={(e) => handleColorChange('bingoButtonText', e.target.value)}
+          style={{
+            width: '140px',
+            padding: '4px 8px',
+            fontSize: '14px',
+            color: theme.textColor,
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: '6px',
+            background: 'transparent',
+            textAlign: 'center',
+          }}
+        />
+      </HStack>
 
       <Box w="full" pt={2} borderTop="1px solid" borderColor="whiteAlpha.200">
         <Text fontSize="sm" opacity={0.8} mb={3}>

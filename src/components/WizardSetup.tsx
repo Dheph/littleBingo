@@ -16,6 +16,8 @@ const defaultWizardTheme: BingoTheme = {
   rightPanelColor: '#1e293b',
   textColor: '#f8fafc',
   buttonColor: '#818cf8',
+  bingoButtonColor: '#ef4444',
+  bingoButtonText: 'BINGO!',
   backgroundImage: null,
   backgroundGradient: null,
   gradientFrom: '#0f172a',

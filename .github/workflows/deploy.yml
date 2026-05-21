@@ -30,6 +30,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Generate version file
+        run: echo "{\"version\":\"$(date -u +%Y%m%d%H%M%S)\"}" > public/version.json
+
       - name: Build
         run: npm run build
 

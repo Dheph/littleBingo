@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { VStack, HStack, Input, Text, Button, Box } from '@chakra-ui/react'
+import { useNavigate } from 'react-router-dom'
 import { useBingoStore } from '../store/bingoStore'
+import { clearState } from '../utils/storage'
 import ThemeEditor from './ThemeEditor'
 
 export default function EditPanel() {
@@ -14,6 +16,7 @@ export default function EditPanel() {
   const drawnNumbers = useBingoStore((s) => s.drawnNumbers)
   const theme = useBingoStore((s) => s.theme)
   const updateTheme = useBingoStore((s) => s.updateTheme)
+  const navigate = useNavigate()
 
   const [manualNum, setManualNum] = useState('')
 
@@ -117,6 +120,25 @@ export default function EditPanel() {
           Tema
         </Text>
         <ThemeEditor theme={theme} onChange={updateTheme} />
+      </Box>
+
+      <Box borderTop="1px solid" borderColor="whiteAlpha.200" pt={4}>
+        <Button
+          size="sm"
+          variant="outline"
+          borderColor="red.500"
+          color="red.400"
+          w="full"
+          onClick={() => {
+            if (window.confirm('Tem certeza? Todo o progresso será perdido.')) {
+              clearState()
+              navigate('/')
+            }
+          }}
+          _hover={{ bg: 'red.500', color: 'white' }}
+        >
+          Limpar Tudo
+        </Button>
       </Box>
     </VStack>
   )
