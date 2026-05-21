@@ -3,7 +3,7 @@ import { Box, Flex, Text, Button, Drawer, IconButton } from '@chakra-ui/react'
 import { useBingoStore } from '../store/bingoStore'
 import { useNavigate } from 'react-router-dom'
 import { clearState } from '../utils/storage'
-import { playBingo } from '../utils/sounds'
+import { playPop, playBingo } from '../utils/sounds'
 import CurrentNumber from './CurrentNumber'
 import DrawButton from './DrawButton'
 import HistoryGrid from './HistoryGrid'
@@ -53,6 +53,32 @@ export default function BingoBoard() {
       document.exitFullscreen()
     }
   }, [])
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
+      if (e.code === 'Space') {
+        e.preventDefault()
+        playPop()
+        useBingoStore.getState().draw()
+      }
+      if (e.key === 'b' || e.key === 'B') {
+        setShowBingo(true)
+        playBingo()
+        confetti({
+          particleCount: 150,
+          spread: 70,
+          startVelocity: 60,
+          origin: { y: 0.6 },
+        })
+      }
+      if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [toggleFullscreen])
 
   function handleBingo() {
     bingo()
@@ -173,7 +199,12 @@ export default function BingoBoard() {
           style={getLeftPanelStyle()}
         >
           <CurrentNumber />
-          <DrawButton />
+          <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
+            <DrawButton />
+            <Text fontSize="xs" opacity={0.4}>
+              Espaço sorteia · B bingo · F tela cheia
+            </Text>
+          </Box>
           <Button
             size="xl"
             bg={theme.bingoButtonColor}

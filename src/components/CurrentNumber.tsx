@@ -30,6 +30,7 @@ export default function CurrentNumber() {
               {currentNumber}
             </MotionText>
           ) : (
+            <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
             <MotionText
               key="empty"
               fontSize={{ base: '3rem', md: '4rem' }}
@@ -41,6 +42,19 @@ export default function CurrentNumber() {
             >
               Clique em SORTEAR
             </MotionText>
+            <MotionText
+              key="empty"
+              fontSize={{ base: '1rem', md: '1.2rem' }}
+              opacity={0.3}
+              color={theme.textColor}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              [Espaço] sorteia · [B] bingo · [F] tela cheia
+            </MotionText>
+            </Box>
+            
           )}
         </AnimatePresence>
       </Box>
