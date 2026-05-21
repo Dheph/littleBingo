@@ -8,6 +8,7 @@ export interface BingoTheme {
   bingoButtonColor: string
   bingoButtonText: string
   backgroundImage: string | null
+  imageBgColor: string
   backgroundGradient: string | null
   gradientFrom: string
   gradientTo: string

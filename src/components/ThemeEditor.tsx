@@ -313,6 +313,26 @@ export default function ThemeEditor({ theme, imageFile, onChange, onImageSelect,
         <Text fontSize="sm" opacity={0.8}>
           Imagem de Fundo
         </Text>
+        <HStack w="full" justify="space-between">
+          <Text fontSize="sm" opacity={0.8}>Cor da sobra</Text>
+          <HStack gap={2}>
+            <input
+              type="color"
+              value={theme.imageBgColor}
+              onChange={(e) => handleColorChange('imageBgColor', e.target.value)}
+              style={{
+                width: '50px',
+                height: '36px',
+                padding: '2px',
+                cursor: 'pointer',
+                border: '1px solid rgba(255,255,255,0.2)',
+                borderRadius: '6px',
+                background: 'transparent',
+              }}
+            />
+            <Text fontSize="xs" fontFamily="mono" opacity={0.6}>{theme.imageBgColor}</Text>
+          </HStack>
+        </HStack>
         <input
           type="file"
           accept="image/*"

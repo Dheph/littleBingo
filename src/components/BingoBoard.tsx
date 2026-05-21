@@ -85,7 +85,11 @@ export default function BingoBoard() {
   function getLeftPanelStyle(): React.CSSProperties {
     if (hasImage) {
       return {
-        background: `url(${theme.backgroundImage}) center / cover no-repeat`,
+        backgroundImage: `url(${theme.backgroundImage})`,
+        backgroundSize: isFullscreen ? 'contain' : 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundColor: theme.imageBgColor,
       }
     }
     if (hasGradient) {
@@ -93,7 +97,7 @@ export default function BingoBoard() {
         background: theme.backgroundGradient!,
       }
     }
-    return {}
+    return { backgroundColor: theme.leftPanelColor }
   }
 
   return (
@@ -158,7 +162,6 @@ export default function BingoBoard() {
         {/* Left Panel */}
         <Box
           flex={2}
-          bg={hasImage || hasGradient ? undefined : theme.leftPanelColor}
           display="flex"
           flexDirection="column"
           alignItems="center"

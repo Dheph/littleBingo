@@ -13,6 +13,7 @@ const defaultTheme: BingoTheme = {
   bingoButtonColor: '#ef4444',
   bingoButtonText: 'BINGO!',
   backgroundImage: null,
+  imageBgColor: '#0f172a',
   backgroundGradient: null,
   gradientFrom: '#0f172a',
   gradientTo: '#1e1b4b',
@@ -33,7 +34,12 @@ function hydrate(): BingoState {
   const saved = loadState()
   if (saved) {
     try {
-      return JSON.parse(saved)
+      const parsed = JSON.parse(saved)
+      return {
+        ...defaultState,
+        ...parsed,
+        theme: { ...defaultTheme, ...parsed.theme },
+      }
     } catch {
       return defaultState
     }
